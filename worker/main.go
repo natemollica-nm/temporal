@@ -5,16 +5,19 @@ import (
 	"net/http"
 
 	"github.com/natemollica-nm/temporal/iplocate"
-
+	"github.com/natemollica-nm/temporal/metrics"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+
+	sdktally "go.temporal.io/sdk/contrib/tally"
 )
 
 func main() {
 	// Create the Temporal client
 	c, err := client.Dial(client.Options{
-		HostPort:  "127.0.0.1:7233",
-		Namespace: "default",
+		HostPort:       "127.0.0.1:7233",
+		Namespace:      "default",
+		MetricsHandler: sdktally.NewMetricsHandler(metrics.GetScope()),
 	})
 	if err != nil {
 		log.Fatalln("Unable to create Temporal client", err)

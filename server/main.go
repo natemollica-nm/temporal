@@ -10,10 +10,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/natemollica-nm/temporal/iplocate"
-
 	"github.com/google/uuid"
+	"github.com/natemollica-nm/temporal/iplocate"
+	"github.com/natemollica-nm/temporal/metrics"
 	"go.temporal.io/sdk/client"
+
+	sdktally "go.temporal.io/sdk/contrib/tally"
 )
 
 var temporalClient client.Client
@@ -22,7 +24,9 @@ var temporalClient client.Client
 func initializeTemporal() error {
 	var err error
 	temporalClient, err = client.Dial(client.Options{
-		HostPort: "localhost:7233",
+		HostPort:       "127.0.0.1:7233",
+		Namespace:      "default",
+		MetricsHandler: sdktally.NewMetricsHandler(metrics.GetScope()),
 	})
 	return err
 }
