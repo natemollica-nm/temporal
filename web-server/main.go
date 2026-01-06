@@ -133,7 +133,7 @@ func serveStaticFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := filepath.Join("web", path)
+	filePath := filepath.Join("web-server/ui", path)
 
 	// Set appropriate MIME type
 	switch filepath.Ext(path) {
