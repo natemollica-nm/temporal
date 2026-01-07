@@ -1,0 +1,27 @@
+# Example configuration for Temporal learning repo
+
+# Temporal server configuration
+temporal:
+  hostPort: "127.0.0.1:7233"
+  namespace: "default"
+
+# Web server configuration  
+server:
+  port: 4000
+  readTimeout: 30s
+  writeTimeout: 30s
+
+# Metrics configuration
+metrics:
+  # Provider can be "prometheus" or "dogstatsd"
+  provider: "prometheus"
+  
+  # Prometheus configuration (when provider is "prometheus")
+  prometheus:
+    listenAddress: ":9090"
+  
+  # DogStatsD configuration (when provider is "dogstatsd")
+  dogstatsd:
+    hostPort: "127.0.0.1:8125"
+    flushInterval: 1s
+    flushBytes: 1432

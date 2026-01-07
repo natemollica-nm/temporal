@@ -49,29 +49,89 @@ In both cases, you provide a name that's included in the greeting.
 
 ## Using the app
 
-The app requires the Temporal Service.
+The app requires the Temporal Service to be running.
 
-Start the web server to handle API and web requests:
+### Quick Start
+
+1. **Start Temporal Server:**
+   ```bash
+   make temporal-start
+   # or: temporal server start-dev
+   ```
+
+2. **Start the Application:**
+   ```bash
+   # Terminal 1: Start the worker
+   make worker
+   
+   # Terminal 2: Start the web server  
+   make server
+   ```
+
+3. **Use the Application:**
+   - **Web UI:** Visit http://localhost:4000 and enter your name
+   - **API:** Send a POST request:
+     ```bash
+     curl -X POST http://localhost:4000/api \
+       -H "Content-Type: application/json" \
+       -d '{"name":"Your Name"}'
+     ```
+
+4. **Monitor Workflows:**
+   - **Temporal UI:** http://localhost:8233
+   - **Metrics:** http://localhost:9090/metrics (Prometheus)
+
+### Alternative: Using Make Targets
 
 ```bash
-$ go run server/main.go
+# Full development setup
+make dev-setup
+
+# Start with different metrics providers
+make metrics-prometheus  # Default Prometheus metrics
+make metrics-dogstatsd   # DataDog StatsD metrics
+
+# Interactive demo
+./scripts/metrics-demo.sh prometheus
 ```
 
-Now start the Temporal Worker
+## Metrics & Observability
 
+This repo supports multiple metrics exporters:
+
+### Prometheus (Default)
 ```bash
-$ go run worker/main.go
+make metrics-prometheus
+# Metrics available at http://localhost:9090/metrics
 ```
 
-Now visit `http://localhost:4000` and enter your name to run the Workflow.
-
-
-You can also issue a cURL request to start the Workflow:
-
+### DogStatsD
 ```bash
-$ curl -X POST http://localhost:4000/api -H "Content-Type: application/json" -d '{"name":"Mike Jones"}'
+make metrics-dogstatsd  
+# Sends metrics to DataDog agent at 127.0.0.1:8125
 ```
 
-Visit http://localhost:8233 to view the Event History in the Temporal UI.
+### Interactive Demo
+```bash
+./scripts/metrics-demo.sh prometheus  # or dogstatsd
+```
 
-Disable your internet connection and try again. This time you'll see the Workflow pause. Restore the internet connection and the Workflow completes.
+## Project Structure
+
+```
+temporal/
+├── cmd/                          # Application entry points
+│   ├── worker/                   # Temporal worker
+│   └── server/                   # Web server
+├── internal/                     # Private application code
+│   ├── config/                   # Configuration management
+│   ├── handlers/                 # HTTP handlers
+│   └── metrics/                  # Metrics and observability
+├── pkg/temporal/                 # Reusable Temporal components
+│   ├── activities/ip/            # IP-related activities
+│   ├── workflows/basic/          # Basic workflow patterns
+│   └── shared/                   # Common types and utilities
+├── examples/                     # Learning examples by pattern
+│   └── 01-basic-workflow/        # Current IP geolocation example
+└── web/static/                   # Web UI assets
+```
